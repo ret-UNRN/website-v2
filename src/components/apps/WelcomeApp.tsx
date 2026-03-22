@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Github } from 'lucide-react'
 import { useDesktopStore } from '../../store/useDesktopStore'
 
 const STATS = [
@@ -73,19 +72,16 @@ export default function WelcomeApp() {
         <div className="mt-7 flex gap-3">
           <button
             onClick={() => openWindow('about')}
-            className="rounded bg-accent px-5 py-2.5 font-mono text-sm text-text transition-colors hover:bg-accent-h"
+            className="rounded border border-border px-5 py-2.5 font-mono text-sm text-muted transition-colors hover:border-muted hover:text-text"
           >
             Conoc&eacute; el club
           </button>
-          <a
-            href="https://github.com/ret-unrn"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded border border-border px-4 py-2.5 font-mono text-sm text-muted transition-colors hover:border-muted hover:text-text"
+          <button
+            onClick={() => openWindow('form')}
+            className="rounded bg-accent px-5 py-2.5 font-mono text-sm text-white transition-colors hover:bg-accent-h"
           >
-            <Github size={16} />
-            github
-          </a>
+            Quiero ser parte
+          </button>
         </div>
       </div>
     </div>

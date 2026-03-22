@@ -7,6 +7,7 @@ export type AppId =
   | 'calendar'
   | 'contact'
   | 'terminal'
+  | 'form'
 
 export interface WindowState {
   id: AppId

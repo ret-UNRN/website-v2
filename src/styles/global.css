@@ -32,7 +32,8 @@
 }
 
 html {
-  font-size: 110%;
+  /* Scales from 14px on small phones to 17px on tablets/desktop */
+  font-size: clamp(14px, 1.5vw + 9px, 17px);
 }
 
 html,
@@ -141,6 +142,11 @@ body {
 
 .dark .window-inactive-overlay {
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Safe area support for mobile devices with notch/home bar */
+.mobile-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Reduced motion */

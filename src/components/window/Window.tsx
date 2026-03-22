@@ -47,19 +47,19 @@ export default function Window({
       icon={icon}
       onClose={() => closeWindow(id)}
       onPointerDown={handleFocus}
+      hideBorder={isMobile}
     />
   )
 
-  // Mobile: fullscreen below top panel
+  // Mobile: fullscreen between topbar (44px) and bottom nav (64px + safe area)
   if (isMobile) {
     return (
       <div
-        className="fixed inset-0 top-8 flex flex-col overflow-hidden bg-surface animate-[window-open_150ms_ease-out]"
-        style={{ zIndex: win.zIndex }}
+        className="fixed inset-x-0 flex flex-col overflow-hidden bg-surface animate-[window-open_200ms_ease-out]"
+        style={{ zIndex: win.zIndex, top: 44, bottom: 64 }}
         onPointerDown={handleFocus}
       >
-        {titlebar}
-        <div className="min-w-0 flex-1 overflow-auto">{children}</div>
+        <div className="min-h-0 flex-1 overflow-auto">{children}</div>
       </div>
     )
   }

@@ -3,6 +3,7 @@ import { useDesktopStore } from '../../store/useDesktopStore'
 import { APPS } from '../../constants/apps'
 import DesktopIcon from './DesktopIcon'
 import Taskbar from './Taskbar'
+import MobileDesktop from './MobileDesktop'
 import Window from '../window/Window'
 import WelcomeApp from '../apps/WelcomeApp'
 import AboutApp from '../apps/AboutApp'
@@ -10,7 +11,9 @@ import ProjectsApp from '../apps/ProjectsApp'
 import CalendarApp from '../apps/CalendarApp'
 import ContactApp from '../apps/ContactApp'
 import TerminalApp from '../apps/TerminalApp'
+import FormApp from '../apps/FormApp'
 import type { AppId } from '../../store/useDesktopStore'
+import { useWindowSize } from '../../hooks/useWindowSize'
 
 const APP_COMPONENTS: Record<AppId, ComponentType> = {
   welcome: WelcomeApp,
@@ -19,6 +22,7 @@ const APP_COMPONENTS: Record<AppId, ComponentType> = {
   calendar: CalendarApp,
   contact: ContactApp,
   terminal: TerminalApp,
+  form: FormApp,
 }
 
 const APP_TITLES: Record<AppId, string> = {
@@ -28,17 +32,23 @@ const APP_TITLES: Record<AppId, string> = {
   calendar: 'agenda',
   contact: 'contacto',
   terminal: 'terminal',
+  form: 'inscripcion',
 }
 
 export default function Desktop() {
+  const { isMobile, isTablet } = useWindowSize()
   const windows = useDesktopStore((s) => s.windows)
   const openWindow = useDesktopStore((s) => s.openWindow)
   const focusWindow = useDesktopStore((s) => s.focusWindow)
 
-  // Open WelcomeApp on first render after boot
+  const isMobileLayout = isMobile || isTablet
+
+  // Open WelcomeApp on first render after boot (desktop only; mobile handles this itself)
   useEffect(() => {
-    openWindow('welcome')
-  }, [openWindow])
+    if (!isMobileLayout) openWindow('welcome')
+  }, [isMobileLayout, openWindow])
+
+  if (isMobileLayout) return <MobileDesktop />
 
   const handleIconClick = (id: AppId) => {
     const isOpen = windows.some((w) => w.id === id)

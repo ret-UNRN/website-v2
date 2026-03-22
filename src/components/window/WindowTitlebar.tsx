@@ -6,6 +6,7 @@ interface WindowTitlebarProps {
   icon: LucideIcon
   onClose: () => void
   onPointerDown: () => void
+  hideBorder?: boolean
 }
 
 export default function WindowTitlebar({
@@ -13,10 +14,11 @@ export default function WindowTitlebar({
   icon: Icon,
   onClose,
   onPointerDown,
+  hideBorder = false,
 }: WindowTitlebarProps) {
   return (
     <div
-      className="flex h-10 items-center border-b border-border bg-surface-2 px-4 select-none"
+      className={`flex h-10 items-center bg-surface-2 px-4 select-none ${hideBorder ? '' : 'border-b border-border'}`}
       onPointerDown={onPointerDown}
     >
       {/* Left: icon + title */}
@@ -27,19 +29,21 @@ export default function WindowTitlebar({
 
       {/* Right: close button */}
       <button
-        onClick={(e) => {
+        onPointerUp={(e) => {
           e.stopPropagation()
           onClose()
         }}
-        className="group ml-4 flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-border transition-colors hover:bg-accent"
+        className="group relative -mr-2 ml-2 flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center"
         aria-label="Cerrar"
       >
-        <X
-          size={8}
-          className="opacity-0 transition-opacity group-hover:opacity-100"
-          style={{ color: '#ffffff' }}
-          strokeWidth={2.5}
-        />
+        <span className="flex h-[14px] w-[14px] items-center justify-center rounded-full bg-border transition-colors group-hover:bg-accent">
+          <X
+            size={8}
+            className="opacity-0 transition-opacity group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+            style={{ color: '#ffffff' }}
+            strokeWidth={2.5}
+          />
+        </span>
       </button>
     </div>
   )
