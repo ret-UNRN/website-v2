@@ -60,12 +60,12 @@ export default function Desktop() {
   }
 
   return (
-    <div className="flex h-full flex-col bg-bg">
+    <div className="desktop-grid isolate relative flex h-full flex-col">
       {/* GNOME-style top panel */}
       <Taskbar />
 
       {/* Desktop area with icons and windows */}
-      <div className="desktop-grid relative flex-1 overflow-hidden">
+      <div className="relative flex-1 overflow-hidden">
         {/* Icon grid */}
         <div className="flex flex-wrap gap-2 p-3 pt-4 sm:flex-col sm:gap-3 sm:p-4 sm:pt-5">
           {APPS.map((app, i) => (
