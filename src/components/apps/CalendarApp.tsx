@@ -10,18 +10,14 @@ interface CalendarEvent {
 }
 
 const EVENTS: CalendarEvent[] = [
-  {
-    date: '2026-03-21',
-    title: 'Reunión de bienvenida al club',
-    time: '18:00',
-    url: 'https://www.retunrn.org',
-  },
-  {
-    date: '2026-03-21',
-    title: 'Taller de programación competitiva',
-    time: '19:30',
-  },
+  // {
+  //   date: '2026-03-21',
+  //   title: 'Reunión de bienvenida al club',
+  //   time: '18:00',
+  //   url: 'https://www.retunrn.org',
+  // },
 ]
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 const DAYS = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom']
@@ -237,10 +233,10 @@ export default function CalendarApp() {
                     ${isSelected
                       ? 'bg-accent text-white'
                       : isToday
-                      ? 'border border-accent bg-accent/10 font-semibold text-accent'
-                      : isWeekend
-                      ? 'text-text/40 hover:bg-surface-2'
-                      : 'text-text/70 hover:bg-surface-2'
+                        ? 'border border-accent bg-accent/10 font-semibold text-accent'
+                        : isWeekend
+                          ? 'text-text/40 hover:bg-surface-2'
+                          : 'text-text/70 hover:bg-surface-2'
                     }`}
                 >
                   {day}
