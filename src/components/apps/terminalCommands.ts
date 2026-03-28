@@ -68,27 +68,40 @@ export const COMMANDS: Record<string, (args: string[]) => string | string[]> = {
 
   sudo: () => 'No flashees confianza',
 
-  neofetch: (args) => [
-    ' /$$                                    /$$     /$$   /$$ /$$   /$$ /$$$$$$$  /$$   /$$|      ',
-    '|  $$                                  | $$    | $$  | $$| $$$ | $$| $$__  $$| $$$ | $$|      ',
-    ' \\  $$             /$$$$$$   /$$$$$$  /$$$$$$  | $$  | $$| $$$$| $$| $$  \\ $$| $$$$| $$| ',
-    '  \\  $$           /$$__  $$ /$$__  $$|_  $$_/  | $$  | $$| $$ $$ $$| $$$$$$$/| $$ $$ $$| ',
-    '   /$$/          | $$  \\__/| $$$$$$$$  | $$    | $$  | $$| $$  $$$$| $$__  $$| $$  $$$$|      ',
-    '  /$$/           | $$      | $$_____/  | $$ /$$| $$  | $$| $$\\  $$$| $$  \\ $$| $$\\  $$$| ',
-    ' /$$/            | $$      |  $$$$$$$  |  $$$$/|  $$$$$$/| $$ \\  $$| $$  | $$| $$ \\  $$| ',
-    '|__//$$$$$$      |__/       \\_______/   \\___/   \\______/ |__/  \\__/|__/  |__/|__/  \\__/  ',
-    '   |______/                                                                                   ',
-    '  ─────────────────────────────────────────────────────',
-    '  user@retunrn',
-    '  ─────────────────────────────────────────────────────',
-    '  OS      retUNRN OS v67.69.67',
-    '  Club    Club de Programación retUNRN',
-    '  Sede    UNRN Sede Andina · Bariloche',
-    '  Lang    C, Python, JavaScript',
-    '  Equipo  5 gordos compu',
-    '  Shell   Ni idea',
-    `  Theme   ${args[0] === 'light' ? 'Light' : 'Dark'}`,
-  ],
+  neofetch: (args) => {
+    const theme = args[0] === 'light' ? 'Light' : 'Dark'
+    const s = Math.floor((Date.now() - PAGE_LOAD) / 1000)
+    const m = Math.floor(s / 60)
+    const h = Math.floor(m / 60)
+    const parts: string[] = []
+    if (h > 0) parts.push(`${h}h`)
+    if (m % 60 > 0) parts.push(`${m % 60}m`)
+    parts.push(`${s % 60}s`)
+    const uptime = parts.join(' ')
+
+    const W = 36
+    const logo = [
+      `▖            ▐  ▌ ▌▙ ▌▛▀▖▙ ▌`,
+      `▝▚▖    ▙▀▖▞▀▖▜▀ ▌ ▌▌▌▌▙▄▘▌▌▌▐▌`,
+      `▞▘     ▌  ▛▀ ▐ ▖▌ ▌▌▝▌▌▚ ▌▝▌▗▖`,
+      `  ▀▀▀  ▘  ▝▀▘ ▀ ▝▀ ▘ ▘▘ ▘▘ ▘▗▘`,
+    ]
+    const header = 'user@retunrn'
+    const sep = '-'.repeat(header.length)
+    const info = [
+      header,
+      sep,
+      `OS: retUNRN OS v2026.1`,
+      `Uptime: ${uptime}`,
+    ]
+
+    const lines = logo.map((l, i) => l.padEnd(W) + (info[i] ?? ''))
+    lines.push(`${''.padEnd(W)}Shell: ni idea pa`)
+    lines.push(`${''.padEnd(W)}Theme: ${theme}`)
+    lines.push(`${''.padEnd(W)}Lang: C, Python, JavaScript`)
+    lines.push(`${''.padEnd(W)}Sede: UNRN Andina · Bariloche`)
+    return lines
+  },
 
   coffee: () => [
     'Brewing... [████████░░]',
