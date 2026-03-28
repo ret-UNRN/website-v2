@@ -147,7 +147,7 @@ export default function BootSequence() {
     <div className="relative h-full w-full overflow-hidden font-mono text-sm" style={{ backgroundColor: '#0d0d0d', color: '#e8e8e8' }}>
       {/* Boot screen (logo + log + progress) */}
       <div
-        className="mx-auto flex h-full max-w-3xl flex-col px-6 transition-opacity duration-500 ease-in"
+        className="mx-auto flex h-full max-w-5xl flex-col px-6 transition-opacity duration-500 ease-in"
         style={{ opacity: bootFading ? 0 : 1 }}
       >
         {/* ASCII logo area */}
@@ -175,11 +175,11 @@ export default function BootSequence() {
           {bootLines.slice(0, lineIndex).map((line, i) => (
             <div
               key={i}
-              className="animate-[slide-in_0.12s_ease_forwards] break-words"
+              className="animate-[slide-in_0.12s_ease_forwards] flex gap-2"
             >
-              <span className="inline-block min-w-[100px] sm:min-w-[140px]" style={{ color: '#444' }}>
+              <span className="w-[110px] shrink-0 sm:w-[130px]" style={{ color: '#444' }}>
                 {line.ts}
-              </span>{' '}
+              </span>
               <span style={{ color: typeColor(line.type) }}>{line.msg}</span>
             </div>
           ))}
