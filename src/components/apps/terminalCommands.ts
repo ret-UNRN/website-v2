@@ -1,21 +1,12 @@
 const PAGE_LOAD = Date.now()
 
-const QUOTES = [
-  '"Computer science is no more about computers than astronomy is about telescopes." — Dijkstra',
-  '"Premature optimization is the root of all evil." — Knuth',
-  '"Talk is cheap. Show me the code." — Torvalds',
-  '"Programs must be written for people to read, and only incidentally for machines to execute." — Abelson',
-  '"Debugging is twice as hard as writing the code in the first place." — Kernighan',
-  '"Any fool can write code that a computer can understand. Good programmers write code that humans can understand." — Fowler',
-]
-
 const GIT_LOG = [
-  'commit a3f9c12  fix: arreglar bug que nunca debería haber existido',
-  'commit b7e2d45  feat: agregar feature que nadie pidió pero todos necesitaban',
-  'commit c1a8f33  chore: renombrar variable de `x` a `xx`',
-  'commit d4b6e21  fix: revertir el fix del fix anterior',
-  'commit e9c3a17  feat: implementar TODO que llevaba 6 meses como TODO',
-  'commit f2d7b09  docs: actualizar README (primera vez en 2 años)',
+  'commit a3f9c12  Cambios',
+  'commit b7e2d45  Cambios de cambios',
+  'commit c1a8f33  Modificaciones de los cambios de los cambios',
+  'commit d4b6e21  Revertir los cambios de los cambios pero mantener modificaciones',
+  'commit e9c3a17  Cambios en las modificaciones de los cambios',
+  'commit f2d7b09  Refactor de 0',
 ]
 
 // ─── Agregá comandos acá ──────────────────────────────────────────────────────
@@ -26,47 +17,33 @@ export const COMMANDS: Record<string, (args: string[]) => string | string[]> = {
   help: () => [
     'Comandos disponibles:',
     '  help          esta ayuda',
-    '  about         info del club',
     '  whoami        quién sos',
     '  ls            apps disponibles',
     '  open <app>    abre una ventana',
     '  uname -a      info del sistema',
     '  uptime        tiempo desde que cargó la página',
     '  git log       historial de commits',
-    '  ping <host>   ping con latencia real™',
     '  fortune       sabiduría aleatoria',
     '  neofetch      info del sistema estilo neofetch',
     '  cowsay <msg>  lo que dice la vaca',
     '  coffee        cafeína',
     '  sudo rm -rf / no lo intentes',
     '  clear         limpia la terminal',
-    '  exit          inténtalo',
+    '  exit          fijate',
   ],
 
-  whoami: () => 'estudiante de la UNRN',
-
-  about: () => [
-    '  ██████╗ ███████╗████████╗██╗   ██╗███╗   ██╗██████╗ ███╗   ██╗',
-    '  ██╔══██╗██╔════╝╚══██╔══╝██║   ██║████╗  ██║██╔══██╗████╗  ██║',
-    '  ██████╔╝█████╗     ██║   ██║   ██║██╔██╗ ██║██████╔╝██╔██╗ ██║',
-    '  ██╔══██╗██╔══╝     ██║   ██║   ██║██║╚██╗██║██╔══██╗██║╚██╗██║',
-    '  ██║  ██║███████╗   ██║   ╚██████╔╝██║ ╚████║██║  ██║██║ ╚████║',
-    '  ╚═╝  ╚═╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝',
-    '',
-    '  Club de Programación · UNRN Sede Andina · Bariloche',
-    '  aprender, competir y construir software con impacto social',
-  ],
+  whoami: () => 'Una maquina de la programación',
 
   ls: () => [
     'inicio  quienes-somos  inscripcion  proyectos  agenda  contacto  terminal',
   ],
 
   'uname -a': () =>
-    'retUNRN OS 2026.1 Bariloche #1 SMP GNU/Patagonia aarch64 GNU/Linux',
+    'retUNRN OS v67.69.67',
 
   uname: (args) =>
     args.includes('-a')
-      ? 'retUNRN OS 2026.1 Bariloche #1 SMP GNU/Patagonia aarch64 GNU/Linux'
+      ? 'retUNRN OS v67.69.67'
       : 'retUNRN',
 
   uptime: () => {
@@ -87,21 +64,29 @@ export const COMMANDS: Record<string, (args: string[]) => string | string[]> = {
       ? GIT_LOG
       : 'git: comando no reconocido. probá `git log`',
 
-  'sudo rm -rf /': () => 'Permiso denegado. Nice try.',
+  'sudo rm -rf /': () => 'Que querés borrar?',
 
-  sudo: () => 'Permiso denegado. Nice try.',
-
-  fortune: () => QUOTES[Math.floor(Math.random() * QUOTES.length)],
+  sudo: () => 'No flashees confianza',
 
   neofetch: (args) => [
+    ' /$$                                    /$$     /$$   /$$ /$$   /$$ /$$$$$$$  /$$   /$$|      ',
+    '|  $$                                  | $$    | $$  | $$| $$$ | $$| $$__  $$| $$$ | $$|      ',
+    ' \\  $$             /$$$$$$   /$$$$$$  /$$$$$$  | $$  | $$| $$$$| $$| $$  \\ $$| $$$$| $$| ',
+    '  \\  $$           /$$__  $$ /$$__  $$|_  $$_/  | $$  | $$| $$ $$ $$| $$$$$$$/| $$ $$ $$| ',
+    '   /$$/          | $$  \\__/| $$$$$$$$  | $$    | $$  | $$| $$  $$$$| $$__  $$| $$  $$$$|      ',
+    '  /$$/           | $$      | $$_____/  | $$ /$$| $$  | $$| $$\\  $$$| $$  \\ $$| $$\\  $$$| ',
+    ' /$$/            | $$      |  $$$$$$$  |  $$$$/|  $$$$$$/| $$ \\  $$| $$  | $$| $$ \\  $$| ',
+    '|__//$$$$$$      |__/       \\_______/   \\___/   \\______/ |__/  \\__/|__/  |__/|__/  \\__/  ',
+    '   |______/                                                                                   ',
+    '  ─────────────────────────────────────────────────────',
     '  user@retunrn',
-    '  ────────────',
-    '  OS      retUNRN OS 2026.1 Bariloche',
+    '  ─────────────────────────────────────────────────────',
+    '  OS      retUNRN OS v67.69.67',
     '  Club    Club de Programación retUNRN',
     '  Sede    UNRN Sede Andina · Bariloche',
-    '  Lang    C++, Python, JavaScript',
-    '  Members 6 coordinadores activos',
-    '  Shell   retsh v1.0',
+    '  Lang    C, Python, JavaScript',
+    '  Equipo  5 gordos compu',
+    '  Shell   Ni idea',
     `  Theme   ${args[0] === 'light' ? 'Light' : 'Dark'}`,
   ],
 
@@ -125,17 +110,6 @@ export const COMMANDS: Record<string, (args: string[]) => string | string[]> = {
       '            (__)\\       )\\/\\',
       '                ||----w |',
       '                ||     ||',
-    ]
-  },
-
-  ping: (args) => {
-    const host = args[0] ?? 'localhost'
-    return [
-      `PING ${host}`,
-      `64 bytes from ${host}: time=${Math.floor(Math.random() * 8) + 1}ms`,
-      `64 bytes from ${host}: time=${Math.floor(Math.random() * 8) + 1}ms`,
-      `64 bytes from ${host}: time=${Math.floor(Math.random() * 8) + 1}ms`,
-      `— ${host} ping statistics: 3 packets, 0% loss`,
     ]
   },
 }

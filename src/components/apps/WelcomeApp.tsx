@@ -99,7 +99,7 @@ export default function WelcomeApp() {
           <div className={`flex flex-col gap-2 sm:gap-3 ${isMobile ? '' : 'md:justify-center'}`}>
             <button
               onClick={() => openWindow('about')}
-              className={`w-full rounded border border-border px-3 py-2 font-mono text-white transition-colors hover:border-muted hover:bg-surface-2 sm:px-5 sm:py-3 ${isMobile ? 'text-[0.7rem]' : 'text-xs sm:text-sm'}`}
+              className={`w-full rounded border border-border px-3 py-2 font-mono text-text transition-colors hover:border-muted hover:bg-surface-2 sm:px-5 sm:py-3 ${isMobile ? 'text-[0.7rem]' : 'text-xs sm:text-sm'}`}
             >
               Conoc&eacute; el club
             </button>
