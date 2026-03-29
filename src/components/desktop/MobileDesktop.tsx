@@ -94,7 +94,7 @@ export default function MobileDesktop() {
   const timeStr = `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`
 
   return (
-    <div className="desktop-grid fixed inset-0">
+    <main className="desktop-grid fixed inset-0">
       {/* Status bar */}
       <div className="fixed inset-x-0 top-0 z-50 flex h-11 items-center border-b border-border bg-surface px-4 font-mono text-xs transition-colors">
         <span className="text-text">
@@ -337,6 +337,6 @@ export default function MobileDesktop() {
           </button>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

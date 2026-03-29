@@ -60,7 +60,7 @@ export default function Desktop() {
   }
 
   return (
-    <div className="desktop-grid isolate relative flex h-full flex-col">
+    <main className="desktop-grid isolate relative flex h-full flex-col">
       {/* GNOME-style top panel */}
       <Taskbar />
 
@@ -104,6 +104,6 @@ export default function Desktop() {
           })}
         </div>
       </div>
-    </div>
+    </main>
   )
 }

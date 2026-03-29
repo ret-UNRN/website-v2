@@ -153,7 +153,7 @@ export default function BootSequence() {
   const rootHeight = vh > 0 ? `${vh}px` : '100vh'
 
   return (
-    <div
+    <main
       className="relative w-full overflow-hidden font-mono text-sm"
       style={{ backgroundColor: '#0d0d0d', color: '#e8e8e8', height: rootHeight }}
     >
@@ -281,6 +281,6 @@ export default function BootSequence() {
           CLUB DE PROGRAMACI&Oacute;N &middot; UNRN &middot; BARILOCHE
         </div>
       </div>
-    </div>
+    </main>
   )
 }

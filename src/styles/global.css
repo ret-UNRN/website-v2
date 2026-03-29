@@ -10,8 +10,8 @@
   --color-border: #2e2e2e;
   --color-text: #e8e8e8;
   --color-muted: #666666;
-  --color-accent: #cc0000;
-  --color-accent-h: #ff2222;
+  --color-accent: #e53535;
+  --color-accent-h: #ff4444;
   --color-green: #00cc66;
 
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -26,8 +26,8 @@
   --color-border: #d0d0d0;
   --color-text: #0d0d0d;
   --color-muted: #555555;
-  --color-accent: #cc0000;
-  --color-accent-h: #aa0000;
+  --color-accent: #b80000;
+  --color-accent-h: #950000;
   --color-green: #008844;
 }
 
