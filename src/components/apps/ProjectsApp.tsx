@@ -2,29 +2,14 @@ import { useEffect, useState } from 'react'
 import { ExternalLink } from 'lucide-react'
 import { useWindowSize } from '../../hooks/useWindowSize'
 
-// ── Agregá proyectos acá ─────────────────────────────────────────────────────
+const PROJECTS_URL = 'https://raw.githubusercontent.com/ret-UNRN/data/main/projects.json'
+
 interface Repo {
   name: string
   description: string
   langs: string[]  // uno o más lenguajes, ej: ['TypeScript', 'React']
   url: string
 }
-
-const REPOS: Repo[] = [
-  {
-    name: 'Esta página',
-    description: 'Sitio web oficial del club — retUNRN OS',
-    langs: ['TypeScript', 'React'],
-    url: 'https://github.com/ret-unrn/website-v2',
-  },
-  {
-    name: 'DOMA',
-    description: 'Genera y ejecuta código python programando con un diagrama de flujo',
-    langs: ['TypeScript', 'React'],
-    url: 'https://github.com/ret-unrn/DOMA',
-  },
-]
-// ─────────────────────────────────────────────────────────────────────────────
 
 const LANG_COLORS: Record<string, string> = {
   TypeScript: 'text-blue-400 border-blue-400/30',
@@ -46,10 +31,13 @@ const LOADING_LINES = [
 ]
 
 export default function ProjectsApp() {
-  const [ready, setReady] = useState(false)
+  const [repos, setRepos] = useState<Repo[]>([])
+  const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading')
   const [visibleLines, setVisibleLines] = useState(0)
+  const [animDone, setAnimDone] = useState(false)
   const { isMobile } = useWindowSize()
 
+  // Animación de terminal + fetch en paralelo
   useEffect(() => {
     let i = 0
     const next = () => {
@@ -58,12 +46,33 @@ export default function ProjectsApp() {
       if (i < LOADING_LINES.length) {
         setTimeout(next, 180)
       } else {
-        setTimeout(() => setReady(true), 400)
+        setTimeout(() => setAnimDone(true), 400)
       }
     }
     const id = setTimeout(next, 100)
     return () => clearTimeout(id)
   }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch(PROJECTS_URL)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
+      .then((data: Repo[]) => {
+        if (!cancelled) {
+          setRepos(data)
+          setStatus('ok')
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setStatus('error')
+      })
+    return () => { cancelled = true }
+  }, [])
+
+  const ready = animDone && status !== 'loading'
 
   if (!ready) {
     const padding = isMobile ? 'px-4 py-4' : 'px-6 py-6'
@@ -97,7 +106,7 @@ export default function ProjectsApp() {
   return (
     <div className={`h-full overflow-auto ${padding}`}>
       {/* Header */}
-      <div className={`mb-3 flex flex-col items-start justify-between gap-2 sm:mb-4 sm:flex-row sm:items-center sm:gap-3`}>
+      <div className="mb-3 flex flex-col items-start justify-between gap-2 sm:mb-4 sm:flex-row sm:items-center sm:gap-3">
         <span className={`font-mono ${headerText} text-muted`}>$ ls ~/proyectos/</span>
         <a
           href="https://github.com/ret-unrn"
@@ -110,36 +119,43 @@ export default function ProjectsApp() {
         </a>
       </div>
 
+      {/* Error */}
+      {status === 'error' && (
+        <p className="font-mono text-xs text-red-500">error al cargar proyectos</p>
+      )}
+
       {/* Repos */}
-      <div className={`grid grid-cols-1 ${cardGap} sm:grid-cols-2`}>
-        {REPOS.map((repo, i) => (
-          <a
-            key={repo.name}
-            href={repo.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`group rounded-lg border border-border bg-surface-2 transition-colors hover:border-accent/40 ${cardPadding}`}
-            style={{ animation: 'slide-in 200ms ease-out both', animationDelay: `${i * 60}ms` }}
-          >
-            <p className={`font-mono font-semibold text-green group-hover:underline ${repoName}`}>
-              {repo.name}
-            </p>
-            <p className={`mt-1 font-mono leading-relaxed text-muted ${repoDesc}`}>
-              {repo.description}
-            </p>
-            <div className={`mt-2 flex flex-wrap gap-1 sm:mt-3`}>
-              {repo.langs.map((lang) => (
-                <span
-                  key={lang}
-                  className={`rounded border px-1.5 py-0.5 font-mono ${langTag} ${LANG_COLORS[lang] ?? 'text-muted border-border'}`}
-                >
-                  {lang}
-                </span>
-              ))}
-            </div>
-          </a>
-        ))}
-      </div>
+      {status === 'ok' && (
+        <div className={`grid grid-cols-1 ${cardGap} sm:grid-cols-2`}>
+          {repos.map((repo, i) => (
+            <a
+              key={repo.name}
+              href={repo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group rounded-lg border border-border bg-surface-2 transition-colors hover:border-accent/40 ${cardPadding}`}
+              style={{ animation: 'slide-in 200ms ease-out both', animationDelay: `${i * 60}ms` }}
+            >
+              <p className={`font-mono font-semibold text-green group-hover:underline ${repoName}`}>
+                {repo.name}
+              </p>
+              <p className={`mt-1 font-mono leading-relaxed text-muted ${repoDesc}`}>
+                {repo.description}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1 sm:mt-3">
+                {repo.langs.map((lang) => (
+                  <span
+                    key={lang}
+                    className={`rounded border px-1.5 py-0.5 font-mono ${langTag} ${LANG_COLORS[lang] ?? 'text-muted border-border'}`}
+                  >
+                    {lang}
+                  </span>
+                ))}
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Clock, ExternalLink } from 'lucide-react'
 
-// ─── Agregá eventos acá ───────────────────────────────────────────────────────
+// Los eventos se leen desde https://github.com/ret-unrn/data/blob/main/events.json
+// Para agregar o editar eventos, modificar ese archivo directamente en GitHub.
+const EVENTS_URL = 'https://raw.githubusercontent.com/ret-UNRN/data/main/events.json'
+
 interface CalendarEvent {
   date: string   // formato YYYY-MM-DD
   title: string
@@ -9,16 +12,7 @@ interface CalendarEvent {
   url?: string   // opcional, link a más info
 }
 
-const EVENTS: CalendarEvent[] = [
-  // {
-  //   date: '2026-03-21',
-  //   title: 'Reunión de bienvenida al club',
-  //   time: '18:00',
-  //   url: 'https://www.retunrn.org',
-  // },
-]
-
-// ─────────────────────────────────────────────────────────────────────────────
+type FetchStatus = 'loading' | 'ok' | 'error'
 
 const DAYS = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom']
 
@@ -57,11 +51,33 @@ export default function CalendarApp() {
   const [selected, setSelected] = useState<string | null>(null)
   const [dir, setDir] = useState<'left' | 'right'>('right')
   const [eventDir, setEventDir] = useState<'left' | 'right'>('right')
+  const [events, setEvents] = useState<CalendarEvent[]>([])
+  const [status, setStatus] = useState<FetchStatus>('loading')
+
+  useEffect(() => {
+    let cancelled = false
+    setStatus('loading')
+    fetch(EVENTS_URL)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
+      .then((data: CalendarEvent[]) => {
+        if (!cancelled) {
+          setEvents(data)
+          setStatus('ok')
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setStatus('error')
+      })
+    return () => { cancelled = true }
+  }, [])
 
   const daysInMonth = getDaysInMonth(year, month)
   const offset = getFirstDayOffset(year, month)
 
-  const eventsByDate = EVENTS.reduce<Record<string, CalendarEvent[]>>((acc, e) => {
+  const eventsByDate = events.reduce<Record<string, CalendarEvent[]>>((acc, e) => {
     acc[e.date] = [...(acc[e.date] ?? []), e]
     return acc
   }, {})
@@ -69,9 +85,9 @@ export default function CalendarApp() {
   const todayKey = toKey(today.getFullYear(), today.getMonth(), today.getDate())
 
   const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`
-  const eventsThisMonth = EVENTS.filter(e => e.date.startsWith(monthKey)).length
+  const eventsThisMonth = events.filter(e => e.date.startsWith(monthKey)).length
 
-  const upcoming = EVENTS
+  const upcoming = events
     .filter(e => e.date >= todayKey)
     .sort((a, b) => a.date.localeCompare(b.date))
 
@@ -158,7 +174,13 @@ export default function CalendarApp() {
                 {MONTHS[month]} <span className="text-accent">{year}</span>
               </span>
               <div className="flex items-center gap-2">
-                {eventsThisMonth > 0 && (
+                {status === 'loading' && (
+                  <span className="font-mono text-[0.65rem] text-muted animate-pulse">cargando...</span>
+                )}
+                {status === 'error' && (
+                  <span className="font-mono text-[0.65rem] text-red-500">sin conexión</span>
+                )}
+                {status === 'ok' && eventsThisMonth > 0 && (
                   <span className="font-mono text-[0.65rem] text-muted">
                     {eventsThisMonth} evento{eventsThisMonth !== 1 ? 's' : ''}
                   </span>
@@ -296,9 +318,16 @@ export default function CalendarApp() {
       {/* Right — upcoming events */}
       <div className="hidden sm:flex w-64 shrink-0 flex-col gap-4 border-l border-border px-4 py-5 overflow-auto">
         <p className="font-mono text-xs text-accent shrink-0"># próximos eventos</p>
-        {upcoming.length === 0 ? (
+        {status === 'loading' && (
+          <p className="font-mono text-xs text-muted animate-pulse">cargando eventos...</p>
+        )}
+        {status === 'error' && (
+          <p className="font-mono text-xs text-red-500">error al cargar eventos</p>
+        )}
+        {status === 'ok' && upcoming.length === 0 && (
           <p className="font-mono text-xs text-muted">sin eventos próximos</p>
-        ) : (
+        )}
+        {status === 'ok' && upcoming.length > 0 && (
           <div className="flex flex-col gap-3">
             {upcoming.map((e, i) => (
               <button
