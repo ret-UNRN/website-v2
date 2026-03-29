@@ -132,9 +132,9 @@ El tema responde al sistema operativo por defecto. El usuario puede cambiarlo co
 --surface-2: #242424   titlebar, inputs
 --border:    #2e2e2e   bordes de ventana
 --text:      #e8e8e8   texto principal
---muted:     #666666   texto secundario
---accent:    #cc0000   rojo retUNRN
---accent-h:  #ff2222   hover del acento
+--muted:     #999999   texto secundario
+--accent:    #eb1f40   rojo retUNRN (extraído del logo)
+--accent-h:  #ff3357   hover del acento
 --green:     #00cc66   indicador online, prompt de terminal
 ```
 
@@ -146,8 +146,8 @@ El tema responde al sistema operativo por defecto. El usuario puede cambiarlo co
 --border:    #d0d0d0
 --text:      #0d0d0d
 --muted:     #555555
---accent:    #cc0000   igual en ambos modos
---accent-h:  #aa0000
+--accent:    #eb1f40   igual en ambos modos
+--accent-h:  #c01535
 --green:     #008844
 ```
 
