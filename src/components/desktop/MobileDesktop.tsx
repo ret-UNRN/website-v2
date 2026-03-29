@@ -33,14 +33,33 @@ export default function MobileDesktop() {
 
 
   const [time, setTime] = useState(() => new Date())
-  const [mounted, setMounted] = useState(false)
   const [closingId, setClosingId] = useState<AppId | null>(null)
   const [launchingId, setLaunchingId] = useState<AppId | null>(null)
+  const [displayCount, setDisplayCount] = useState(0)
+  const [resolved, setResolved] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     const id = setInterval(() => setTime(new Date()), 1000)
     return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/inscripciones-count')
+      .then((res) => res.json())
+      .then((data) => {
+        const total: number = data.total ?? 0
+        setResolved(true)
+        const duration = 800
+        const start = performance.now()
+        const tick = (now: number) => {
+          const t = Math.min((now - start) / duration, 1)
+          const eased = 1 - (1 - t) * (1 - t)
+          setDisplayCount(Math.round(eased * total))
+          if (t < 1) requestAnimationFrame(tick)
+        }
+        requestAnimationFrame(tick)
+      })
+      .catch(() => {})
   }, [])
 
   // Active window: highest zIndex, not minimized
@@ -119,12 +138,21 @@ export default function MobileDesktop() {
               </div>
 
               {/* Member counter — compact, top right */}
-              <div className="flex items-center gap-1 rounded border border-green/30 bg-green/5 px-2 py-1.5 shrink-0">
-                <div className="h-1 w-1 rounded-full bg-green" />
-                <div className="font-mono text-[0.6rem] text-text whitespace-nowrap">
-                  <span className="text-green">{mounted ? 40 : 0}</span>
-                  <span className="text-muted"> activos</span>
-                </div>
+              <div className={`flex items-center gap-1 rounded border px-2 py-1.5 shrink-0 transition-all duration-700 ${resolved ? 'border-green/30 bg-green/5' : 'border-yellow-500/30 bg-yellow-500/5'}`}>
+                <div
+                  className={`h-1 w-1 rounded-full shrink-0 transition-colors duration-700 ${resolved ? 'bg-green' : 'bg-yellow-400'}`}
+                  style={resolved ? undefined : { animation: 'pulse 800ms ease-in-out infinite' }}
+                />
+                {!resolved ? (
+                  <span className="font-mono text-[0.6rem] text-yellow-400 whitespace-nowrap">...</span>
+                ) : (
+                  <div className="font-mono text-[0.6rem] text-text whitespace-nowrap" style={{ animation: 'slide-up 300ms ease-out both' }}>
+                    <span className="text-green tabular-nums" style={{ animation: 'count-pop 500ms cubic-bezier(0.34,1.56,0.64,1) both' }}>
+                      {displayCount}
+                    </span>
+                    <span className="text-muted"> miembros</span>
+                  </div>
+                )}
               </div>
             </div>
 

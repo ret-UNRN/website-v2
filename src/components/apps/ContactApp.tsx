@@ -17,11 +17,18 @@ export default function ContactApp() {
     const form = e.currentTarget
     const data = new FormData(form)
 
+    const payload = {
+      nombre: data.get('nombre'),
+      email: data.get('email'),
+      tema: data.get('tema'),
+      mensaje: data.get('mensaje'),
+    }
+
     try {
-      const res = await fetch('https://formspree.io/f/REEMPLAZAR_ID', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
-        body: data,
-        headers: { Accept: 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       })
       if (res.ok) {
         setStatus('sent')
@@ -39,21 +46,21 @@ export default function ContactApp() {
   if (status === 'sent') {
     return (
       <div className={`flex h-full flex-col items-center justify-center gap-4 ${padding}`}>
-        <CheckCircle size={48} className="text-green" />
-        <div className="text-center space-y-1">
-          <p className={`font-mono font-bold text-green ${bodyText}`}>mensaje enviado</p>
-          <p className={`font-mono text-muted ${bodyText}`}>
-            te respondemos desde{' '}
-            <span className="text-accent">info@retunrn.org</span>
-          </p>
+        <div style={{ animation: 'count-pop 500ms cubic-bezier(0.34,1.56,0.64,1) both' }}>
+          <CheckCircle size={48} className="text-green" />
         </div>
-        <p className="font-mono text-xs text-green">$ sent → OK (200)</p>
-        <button
-          onClick={() => setStatus('idle')}
-          className={`font-mono text-accent transition-colors hover:text-accent-h ${bodyText}`}
+        <p
+          className={`font-mono font-bold text-green ${bodyText}`}
+          style={{ animation: 'slide-up 300ms ease-out both', animationDelay: '120ms' }}
         >
-          ↻ enviar otro mensaje
-        </button>
+          mensaje enviado
+        </p>
+        <p
+          className="font-mono text-xs text-green"
+          style={{ animation: 'slide-up 300ms ease-out both', animationDelay: '240ms' }}
+        >
+          $ sent → OK (200)
+        </p>
       </div>
     )
   }
@@ -124,8 +131,11 @@ export default function ContactApp() {
 
           {/* Error */}
           {status === 'error' && (
-            <div className="flex items-center gap-2 rounded border border-accent/50 bg-accent/5 px-3 py-2">
-              <AlertCircle size={12} className="shrink-0 text-accent" />
+            <div
+              className="flex items-center gap-2 rounded border border-accent/50 bg-accent/5 px-3 py-2"
+              style={{ animation: 'slide-up 250ms cubic-bezier(0.34,1.56,0.64,1) both' }}
+            >
+              <AlertCircle size={12} className="shrink-0 text-accent" style={{ animation: 'count-pop 400ms cubic-bezier(0.34,1.56,0.64,1) both' }} />
               <p className={`font-mono text-accent ${bodyText}`}>Error: intentá de nuevo</p>
             </div>
           )}

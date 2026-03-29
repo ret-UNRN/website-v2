@@ -58,3 +58,5 @@ coverage/
 # Misc
 .claude/
 *.tmp
+.vercel
+.env*.local

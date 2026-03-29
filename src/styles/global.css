@@ -265,6 +265,12 @@ body {
     fill 250ms ease !important;
 }
 
+@keyframes count-pop {
+  0%   { scale: 0.6; opacity: 0; filter: blur(4px); }
+  60%  { scale: 1.12; opacity: 1; filter: blur(0); }
+  100% { scale: 1; opacity: 1; filter: blur(0); }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * {

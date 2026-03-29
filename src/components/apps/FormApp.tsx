@@ -107,11 +107,22 @@ export default function FormApp() {
     const form = e.currentTarget
     const data = new FormData(form)
 
+    const payload = {
+      nombre: data.get('nombre'),
+      email: data.get('email'),
+      origen_tipo: data.get('origen_tipo'),
+      institucion: data.get('institucion'),
+      nivel_programacion: data.get('nivel_programacion'),
+      intereses: intereses.join(', '),
+      interes_otro: otroInteres || null,
+      motivacion: data.get('motivacion') || null,
+    }
+
     try {
-      const res = await fetch('https://formspree.io/f/REEMPLAZAR_ID', {
+      const res = await fetch('/api/inscripcion', {
         method: 'POST',
-        body: data,
-        headers: { Accept: 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       })
       if (res.ok) {
         setStatus('sent')
@@ -136,24 +147,21 @@ export default function FormApp() {
   if (status === 'sent') {
     return (
       <div className={`flex h-full flex-col items-center justify-center gap-4 ${padding}`}>
-        <div {...anim(0)}>
+        <div style={{ animation: 'count-pop 500ms cubic-bezier(0.34,1.56,0.64,1) both' }}>
           <CheckCircle size={48} className="text-green" />
         </div>
-        <div className="text-center space-y-1" {...anim(80)}>
-          <p className={`font-mono font-bold text-green ${bodyText}`}>inscripción enviada</p>
-          <p className={`font-mono text-muted ${bodyText}`}>
-            te contactamos pronto desde{' '}
-            <span className="text-accent">info@retunrn.org</span>
-          </p>
-        </div>
-        <p className="font-mono text-xs text-green" {...anim(160)}>$ sent → OK (200)</p>
-        <button
-          onClick={() => setStatus('idle')}
-          className={`font-mono text-accent transition-colors hover:text-accent-h ${bodyText}`}
-          {...anim(240)}
+        <p
+          className={`font-mono font-bold text-green ${bodyText}`}
+          style={{ animation: 'slide-up 300ms ease-out both', animationDelay: '120ms' }}
         >
-          ↻ enviar otra inscripción
-        </button>
+          inscripción enviada
+        </p>
+        <p
+          className="font-mono text-xs text-green"
+          style={{ animation: 'slide-up 300ms ease-out both', animationDelay: '240ms' }}
+        >
+          $ sent → OK (200)
+        </p>
       </div>
     )
   }
@@ -259,8 +267,8 @@ export default function FormApp() {
                   <label
                     key={interes}
                     className={`flex cursor-pointer items-center gap-2 rounded border px-3 py-2 font-mono ${bodyText} transition-all duration-150 ${checked
-                        ? 'border-accent bg-accent/10 text-text'
-                        : 'border-border text-muted hover:border-accent/50 hover:text-text'
+                      ? 'border-accent bg-accent/10 text-text'
+                      : 'border-border text-muted hover:border-accent/50 hover:text-text'
                       }`}
                   >
                     <input
@@ -287,8 +295,8 @@ export default function FormApp() {
               {/* Otro */}
               <label
                 className={`flex cursor-pointer items-center gap-2 rounded border px-3 py-2 font-mono ${bodyText} transition-all duration-150 ${intereses.includes('otro')
-                    ? 'border-accent bg-accent/10 text-text'
-                    : 'border-border text-muted hover:border-accent/50 hover:text-text'
+                  ? 'border-accent bg-accent/10 text-text'
+                  : 'border-border text-muted hover:border-accent/50 hover:text-text'
                   }`}
               >
                 <input
@@ -338,9 +346,9 @@ export default function FormApp() {
           {status === 'error' && (
             <div
               className="flex items-center gap-2 rounded border border-accent/50 bg-accent/5 px-3 py-2"
-              style={{ animation: 'slide-up 180ms ease-out both' }}
+              style={{ animation: 'slide-up 250ms cubic-bezier(0.34,1.56,0.64,1) both' }}
             >
-              <AlertCircle size={12} className="shrink-0 text-accent" />
+              <AlertCircle size={12} className="shrink-0 text-accent" style={{ animation: 'count-pop 400ms cubic-bezier(0.34,1.56,0.64,1) both' }} />
               <p className={`font-mono text-accent ${bodyText}`}>Error: intentá de nuevo</p>
             </div>
           )}

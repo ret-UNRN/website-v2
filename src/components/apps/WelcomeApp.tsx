@@ -9,33 +9,33 @@ const ACTIVITIES = [
   'Dar talleres y llevar programación a escuelas',
 ]
 
-const ACTIVE_MEMBERS = 40
 
 export default function WelcomeApp() {
   const openWindow = useDesktopStore((s) => s.openWindow)
   const { isMobile } = useWindowSize()
-  const [mounted, setMounted] = useState(false)
-  const [memberCount, setMemberCount] = useState(0)
+  const [displayCount, setDisplayCount] = useState(0)
+  const [resolved, setResolved] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    fetch('/api/inscripciones-count')
+      .then((res) => res.json())
+      .then((data) => {
+        const total: number = data.total ?? 0
+        setResolved(true)
+
+        // Count up animation: easeOutQuad over ~800ms
+        const duration = 800
+        const start = performance.now()
+        const tick = (now: number) => {
+          const t = Math.min((now - start) / duration, 1)
+          const eased = 1 - (1 - t) * (1 - t)
+          setDisplayCount(Math.round(eased * total))
+          if (t < 1) requestAnimationFrame(tick)
+        }
+        requestAnimationFrame(tick)
+      })
+      .catch(() => {})
   }, [])
-
-  // Animate member counter
-  useEffect(() => {
-    if (!mounted) return
-    let current = 0
-    const interval = setInterval(() => {
-      current += Math.ceil(ACTIVE_MEMBERS / 20)
-      if (current >= ACTIVE_MEMBERS) {
-        setMemberCount(ACTIVE_MEMBERS)
-        clearInterval(interval)
-      } else {
-        setMemberCount(current)
-      }
-    }, 40)
-    return () => clearInterval(interval)
-  }, [mounted])
 
   return (
     <div className="h-full overflow-auto px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-6">
@@ -61,14 +61,30 @@ export default function WelcomeApp() {
 
           {/* Member counter */}
           <div
-            className={`flex items-center gap-2 rounded border border-green/30 bg-green/5 ${isMobile ? 'px-3 py-2' : 'px-4 py-3'}`}
+            className={`flex items-center gap-2 rounded border transition-all duration-700 ${resolved ? 'border-green/30 bg-green/5' : 'border-yellow-500/30 bg-yellow-500/5'} ${isMobile ? 'px-3 py-2' : 'px-4 py-3'}`}
             style={{ animation: 'slide-in 200ms ease-out both', animationDelay: '200ms' }}
           >
-            <div className="h-2 w-2 rounded-full bg-green shrink-0" />
-            <div className={`font-mono text-text ${isMobile ? 'text-[0.7rem]' : 'text-xs sm:text-sm'}`}>
-              <span className="text-green">{memberCount}</span>
-              <span className="text-muted"> miembros activos</span>
-            </div>
+            {/* dot */}
+            <div
+              className={`h-2 w-2 rounded-full shrink-0 transition-colors duration-700 ${resolved ? 'bg-green' : 'bg-yellow-400'}`}
+              style={resolved ? undefined : { animation: 'pulse 800ms ease-in-out infinite' }}
+            />
+
+            {!resolved ? (
+              <span className={`font-mono text-yellow-400 ${isMobile ? 'text-[0.7rem]' : 'text-xs sm:text-sm'}`}>
+                obteniendo info...
+              </span>
+            ) : (
+              <div
+                className={`font-mono text-text ${isMobile ? 'text-[0.7rem]' : 'text-xs sm:text-sm'}`}
+                style={{ animation: 'slide-up 300ms ease-out both' }}
+              >
+                <span className="text-green tabular-nums" style={{ animation: 'count-pop 500ms cubic-bezier(0.34,1.56,0.64,1) both' }}>
+                  {displayCount}
+                </span>
+                <span className="text-muted"> miembros</span>
+              </div>
+            )}
           </div>
         </div>
 
