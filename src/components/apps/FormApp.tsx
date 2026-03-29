@@ -194,7 +194,7 @@ export default function FormApp() {
               name="nombre"
               type="text"
               required
-              placeholder="ej: Jose Pérez"
+              placeholder="ej: José Pérez"
               className={inputClasses}
             />
           </div>
@@ -206,7 +206,7 @@ export default function FormApp() {
               name="email"
               type="email"
               required
-              placeholder="ej: josesitokapo2005@yahoo.com.ar"
+              placeholder="ej: nombre@correo.com"
               className={inputClasses}
             />
           </div>
