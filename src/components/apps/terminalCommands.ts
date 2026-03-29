@@ -91,7 +91,7 @@ export const COMMANDS: Record<string, (args: string[]) => string | string[]> = {
     const info = [
       header,
       sep,
-      `OS: retUNRN OS v2026.1`,
+      `OS: retUNRN OS v67.69.67`,
       `Uptime: ${uptime}`,
     ]
 
