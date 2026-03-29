@@ -84,8 +84,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               <table cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
                 <tr>
                   <td style="background-color:#cc0000;border-radius:4px;">
-                    <a href="https://github.com/retunrn" style="display:inline-block;padding:10px 20px;font-size:12px;font-weight:bold;color:#ffffff;text-decoration:none;letter-spacing:0.5px;">
-                      → github.com/retunrn
+                    <a href="https://github.com/ret-unrn" style="display:inline-block;padding:10px 20px;font-size:12px;font-weight:bold;color:#ffffff;text-decoration:none;letter-spacing:0.5px;">
+                      → github.com/ret-unrn
                     </a>
                   </td>
                 </tr>
