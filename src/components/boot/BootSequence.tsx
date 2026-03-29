@@ -13,7 +13,7 @@ const DELAYS = {
 
 function getBarWidth(): number {
   const vw = window.innerWidth
-  const availPx = Math.min(vw - 48, 720)          // px-6 a cada lado, cap max-w-3xl
+  const availPx = Math.min(vw - 48, 720)
   const baseFontPx = Math.min(Math.max(14, 1.5 * vw / 100 + 9), 17)  // clamp global
   const smFontPx = baseFontPx * 0.875              // text-sm = 0.875rem
   const charPx = smFontPx * 0.601                  // JetBrains Mono ~0.6em por char
@@ -53,6 +53,12 @@ export default function BootSequence() {
   const [bootFading, setBootFading] = useState(false)
   const [logoError, setLogoError] = useState(false)
 
+  // iOS Safari viewport fix: 100vh incluye la barra de navegación del browser,
+  // lo que puede ocultar contenido. window.innerHeight devuelve la altura visible real.
+  const [vh, setVh] = useState(() =>
+    typeof window !== 'undefined' ? window.innerHeight : 0,
+  )
+
   const logRef = useRef<HTMLDivElement>(null)
   const timersRef = useRef<number[]>([])
 
@@ -69,12 +75,12 @@ export default function BootSequence() {
     }
   }, [])
 
-  // Skip boot for reduced motion
+  // Mantener vh sincronizado cuando iOS Safari muestra/oculta la barra de navegación
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setBootCompleted()
-    }
-  }, [setBootCompleted])
+    const update = () => setVh(window.innerHeight)
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
 
   // Phase 1: Logo fade-in → start log
   useEffect(() => {
@@ -143,17 +149,30 @@ export default function BootSequence() {
 
   const displayProgress = phase === 'progress' ? progress : logProgress
 
+  // Altura real del viewport: fix para iOS Safari donde 100vh ≠ área visible
+  const rootHeight = vh > 0 ? `${vh}px` : '100vh'
+
   return (
-    <div className="relative h-full w-full overflow-hidden font-mono text-sm" style={{ backgroundColor: '#0d0d0d', color: '#e8e8e8' }}>
+    <div
+      className="relative w-full overflow-hidden font-mono text-sm"
+      style={{ backgroundColor: '#0d0d0d', color: '#e8e8e8', height: rootHeight }}
+    >
       {/* Boot screen (logo + log + progress) */}
       <div
-        className="mx-auto flex h-full max-w-5xl flex-col px-6 transition-opacity duration-500 ease-in"
-        style={{ opacity: bootFading ? 0 : 1 }}
+        className="mx-auto flex max-w-5xl flex-col px-6"
+        style={{
+          height: '100%',
+          opacity: bootFading ? 0 : 1,
+          transition: 'opacity 0.5s ease-in',
+        }}
       >
         {/* ASCII logo area */}
         <div
-          className="flex flex-col items-center gap-2 pt-8 pb-6 transition-opacity duration-[600ms] ease-out"
-          style={{ opacity: phase === 'logo' ? 0 : 1 }}
+          className="flex flex-col items-center gap-2 pt-8 pb-6"
+          style={{
+            opacity: phase === 'logo' ? 0 : 1,
+            transition: 'opacity 600ms ease-out',
+          }}
         >
           <div className="text-center text-xs leading-tight tracking-wider">
             <span style={{ color: '#cc0000' }}>&gt;_</span>
@@ -202,18 +221,24 @@ export default function BootSequence() {
 
       {/* Logo splash overlay */}
       <div
-        className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-black transition-opacity duration-500 ease-in"
+        className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-black"
         style={{
           opacity: phase === 'splash' && !splashFading ? 1 : 0,
           pointerEvents: phase === 'splash' ? 'all' : 'none',
+          transition: 'opacity 0.5s ease-in',
         }}
       >
         {logoError ? (
           <div
-            className="font-mono text-4xl font-bold transition-all duration-[550ms] ease-out"
+            className="font-mono text-4xl font-bold"
             style={{
               opacity: splashVisible && !splashFading ? 1 : 0,
-              transform: splashFading ? 'scale(1.04)' : splashVisible ? 'scale(1)' : 'scale(0.88)',
+              transform: splashFading
+                ? 'scale(1.04)'
+                : splashVisible
+                  ? 'scale(1)'
+                  : 'scale(0.88)',
+              transition: 'all 550ms ease-out',
             }}
           >
             <span style={{ color: '#e8e8e8' }}>ret</span>
@@ -223,7 +248,7 @@ export default function BootSequence() {
           <img
             src="/logo.png"
             alt="retUNRN"
-            className="w-[min(280px,60vw)] transition-all duration-[550ms] ease-out"
+            className="w-[min(280px,60vw)]"
             onError={() => setLogoError(true)}
             style={{
               opacity: splashVisible && !splashFading ? 1 : 0,
@@ -232,26 +257,25 @@ export default function BootSequence() {
                 : splashVisible
                   ? 'scale(1)'
                   : 'scale(0.88)',
+              transition: 'all 550ms ease-out',
             }}
           />
         )}
         <div
-          className="h-px bg-accent transition-[width] duration-[900ms] ease-out"
+          className="h-px bg-accent"
           style={{
             width: splashVisible && !splashFading ? 'min(280px, 60vw)' : '0',
-            transitionDelay: '100ms',
+            transition: 'width 900ms ease-out 100ms',
           }}
         />
         <div
-          className="font-mono text-xs tracking-[0.2em] transition-all duration-500 ease-out"
+          className="font-mono text-xs tracking-[0.2em]"
           style={{
             color: '#333',
             opacity: splashVisible && !splashFading ? 1 : 0,
             transform:
-              splashVisible && !splashFading
-                ? 'translateY(0)'
-                : 'translateY(5px)',
-            transitionDelay: splashVisible && !splashFading ? '250ms' : '0ms',
+              splashVisible && !splashFading ? 'translateY(0)' : 'translateY(5px)',
+            transition: `all 500ms ease-out ${splashVisible && !splashFading ? '250ms' : '0ms'}`,
           }}
         >
           CLUB DE PROGRAMACI&Oacute;N &middot; UNRN &middot; BARILOCHE

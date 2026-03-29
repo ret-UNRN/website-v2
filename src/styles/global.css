@@ -271,10 +271,3 @@ body {
   100% { scale: 1; opacity: 1; filter: blur(0); }
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
