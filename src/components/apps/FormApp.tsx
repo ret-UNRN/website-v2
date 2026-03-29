@@ -3,7 +3,7 @@ import { Send, CheckCircle, AlertCircle } from 'lucide-react'
 import { useWindowSize } from '../../hooks/useWindowSize'
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
-type Origen = 'universidad' | 'escuela' | ''
+type Origen = 'universidad' | 'escuela' | 'otro' | ''
 
 const UNIVERSIDADES = [
   'UNRN — Universidad Nacional de Río Negro',
@@ -93,6 +93,9 @@ const NIVELES_PROGRAMACION = [
 export default function FormApp() {
   const [status, setStatus] = useState<Status>('idle')
   const [origen, setOrigen] = useState<Origen>('')
+  const [otroOrigen, setOtroOrigen] = useState('')
+  const [institucion, setInstitucion] = useState('')
+  const [otraInstitucion, setOtraInstitucion] = useState('')
   const [intereses, setIntereses] = useState<string[]>([])
   const [otroInteres, setOtroInteres] = useState('')
   const { isMobile, isTablet } = useWindowSize()
@@ -110,8 +113,8 @@ export default function FormApp() {
     const payload = {
       nombre: data.get('nombre'),
       email: data.get('email'),
-      origen_tipo: data.get('origen_tipo'),
-      institucion: data.get('institucion'),
+      origen_tipo: origen === 'otro' ? otroOrigen : origen,
+      institucion: origen === 'otro' ? otraInstitucion : (institucion === 'Otra' ? otraInstitucion : institucion),
       nivel_programacion: data.get('nivel_programacion'),
       intereses: intereses.join(', '),
       interes_otro: otroInteres || null,
@@ -128,6 +131,9 @@ export default function FormApp() {
         setStatus('sent')
         form.reset()
         setOrigen('')
+        setOtroOrigen('')
+        setInstitucion('')
+        setOtraInstitucion('')
         setIntereses([])
         setOtroInteres('')
       } else {
@@ -206,43 +212,100 @@ export default function FormApp() {
           </div>
 
           {/* Origen */}
-          <div className="space-y-1" {...anim(180)}>
+          <div className="space-y-2" {...anim(180)}>
             <p className={`font-mono ${sectionTitle} text-accent`}># Venís de...</p>
             <select
-              name="origen_tipo"
               required
               value={origen}
-              onChange={(e) => setOrigen(e.target.value as Origen)}
+              onChange={(e) => { setOrigen(e.target.value as Origen); setOtroOrigen(''); setInstitucion(''); setOtraInstitucion('') }}
               className={inputClasses}
             >
               <option value="" disabled>seleccioná una opción</option>
               <option value="universidad">Universidad / Instituto terciario</option>
               <option value="escuela">Escuela secundaria</option>
+              <option value="otro">Otro</option>
             </select>
+            {origen === 'otro' && (
+              <input
+                type="text"
+                required
+                value={otroOrigen}
+                onChange={(e) => setOtroOrigen(e.target.value)}
+                placeholder="¿de dónde venís?"
+                className={inputClasses}
+                style={{ animation: 'slide-up 200ms cubic-bezier(0.34,1.56,0.64,1) both' }}
+              />
+            )}
           </div>
 
           {/* Institución condicional */}
           {origen === 'universidad' && (
-            <div className="space-y-1" style={{ animation: 'slide-up 200ms ease-out both' }}>
+            <div className="space-y-2" style={{ animation: 'slide-up 200ms ease-out both' }}>
               <p className={`font-mono ${sectionTitle} text-accent`}># Institución</p>
-              <select name="institucion" required className={inputClasses} defaultValue="">
+              <select
+                required
+                value={institucion}
+                onChange={(e) => { setInstitucion(e.target.value); setOtraInstitucion('') }}
+                className={inputClasses}
+              >
                 <option value="" disabled>seleccioná tu universidad</option>
                 {UNIVERSIDADES.map((u) => (
                   <option key={u} value={u}>{u}</option>
                 ))}
               </select>
+              {institucion === 'Otra' && (
+                <input
+                  type="text"
+                  required
+                  value={otraInstitucion}
+                  onChange={(e) => setOtraInstitucion(e.target.value)}
+                  placeholder="¿cuál?"
+                  className={inputClasses}
+                  style={{ animation: 'slide-up 200ms cubic-bezier(0.34,1.56,0.64,1) both' }}
+                />
+              )}
             </div>
           )}
 
           {origen === 'escuela' && (
-            <div className="space-y-1" style={{ animation: 'slide-up 200ms ease-out both' }}>
+            <div className="space-y-2" style={{ animation: 'slide-up 200ms ease-out both' }}>
               <p className={`font-mono ${sectionTitle} text-accent`}># Escuela</p>
-              <select name="institucion" required className={inputClasses} defaultValue="">
+              <select
+                required
+                value={institucion}
+                onChange={(e) => { setInstitucion(e.target.value); setOtraInstitucion('') }}
+                className={inputClasses}
+              >
                 <option value="" disabled>seleccioná tu escuela</option>
                 {ESCUELAS.map((e) => (
                   <option key={e} value={e}>{e}</option>
                 ))}
               </select>
+              {institucion === 'Otra' && (
+                <input
+                  type="text"
+                  required
+                  value={otraInstitucion}
+                  onChange={(e) => setOtraInstitucion(e.target.value)}
+                  placeholder="¿cuál?"
+                  className={inputClasses}
+                  style={{ animation: 'slide-up 200ms cubic-bezier(0.34,1.56,0.64,1) both' }}
+                />
+              )}
+            </div>
+          )}
+
+          {origen === 'otro' && otroOrigen && (
+            <div className="space-y-2" style={{ animation: 'slide-up 200ms cubic-bezier(0.34,1.56,0.64,1) both' }}>
+              <p className={`font-mono ${sectionTitle} text-accent`}># Institución</p>
+              <input
+                type="text"
+                required
+                value={otraInstitucion}
+                onChange={(e) => setOtraInstitucion(e.target.value)}
+                placeholder="ej: empresa, colegio, independiente..."
+                className={inputClasses}
+              />
             </div>
           )}
 
